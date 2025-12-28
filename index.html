@@ -49,8 +49,21 @@
         .nav-btn.active { border-right: 4px solid var(--primary); }
 
         .workspace { flex: 1; background: var(--main-bg); margin: 15px; border-radius: 35px; padding: 50px; overflow-y: auto; position: relative; }
-        .clock { position: absolute; top: 25px; left: 45px; color: #ccc; font-weight: bold; }
+        <div id="hatim-clock" style="color: #00ff00; font-family: 'Courier New', monospace; font-size: 24px; font-weight: bold; text-shadow: 0 0 10px #00ff00; text-align: left; padding: 10px;">
+  00:00:00
+</div>
 
+<script>
+function updateClock() {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('hatim-clock').textContent = hours + ":" + minutes + ":" + seconds;
+}
+setInterval(updateClock, 1000);
+updateClock(); // لتشغيلها فوراً
+</script>
         .section { display: none; }
         .section.active { display: block; }
 
