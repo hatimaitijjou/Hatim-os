@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hatim Space | Organizing my time</title>
+    <title>Hatim Space | منصة الفريق الجماعية</title>
     <style>
         :root { --primary: #00ff41; --bg: #0a0a0a; --toolbar: #161616; --page: #ffffff; --chat-bg: #111; }
         body { margin: 0; background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
 
-        /* شاشة الدخول */
+        /* شاشة الدخول المتغيرة */
         #login-screen {
             position: fixed; inset: 0; background: radial-gradient(circle, #1a1a1a 0%, #000 100%);
             z-index: 10000; display: flex; align-items: center; justify-content: center;
@@ -16,43 +16,44 @@
         .login-card {
             background: rgba(20, 20, 20, 0.9); padding: 40px; border-radius: 20px;
             border: 1px solid #333; text-align: center; width: 350px; backdrop-filter: blur(10px);
+            box-shadow: 0 0 50px rgba(0, 255, 65, 0.1);
         }
-        .login-card input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 8px; border: 1px solid #333; background: #000; color: white; outline: none; }
-        .btn-entry { width: 100%; padding: 14px; background: var(--primary); color: #000; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; }
+        .login-card h2 { color: var(--primary); margin-bottom: 5px; }
+        .login-card p { color: #888; font-size: 0.9rem; margin-bottom: 20px; }
+        .login-card input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 8px; border: 1px solid #333; background: #000; color: white; outline: none; box-sizing: border-box; }
+        .btn-entry { width: 100%; padding: 14px; background: var(--primary); color: #000; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; margin-top: 10px; }
 
         /* شريط الأدوات */
-        .toolbar { background: var(--toolbar); padding: 10px 20px; display: flex; gap: 10px; border-bottom: 1px solid #333; align-items: center; z-index: 10; }
-        .t-btn { background: #222; border: 1px solid #444; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .toolbar { background: var(--toolbar); padding: 10px 20px; display: flex; gap: 10px; border-bottom: 1px solid #333; align-items: center; }
+        .t-btn { background: #222; border: 1px solid #444; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
         .t-btn:hover { background: var(--primary); color: black; }
 
-        /* تخطيط العمل والدردشة */
-        .main-container { flex: 1; display: flex; overflow: hidden; position: relative; }
+        /* منطقة العمل */
+        .main-container { flex: 1; display: flex; overflow: hidden; }
         
-        /* منطقة المحرر (Word) */
-        .workspace { flex: 1; padding: 40px; overflow-y: auto; background: #1a1a1a; display: flex; justify-content: center; position: relative; }
+        /* المحرر */
+        .workspace { flex: 1; padding: 30px; overflow-y: auto; background: #1a1a1a; display: flex; justify-content: center; position: relative; }
         #editor {
-            width: 100%; max-width: 800px; min-height: 1000px; background: var(--page); color: #222;
+            width: 100%; max-width: 800px; min-height: 1100px; background: var(--page); color: #222;
             padding: 60px; box-shadow: 0 0 40px rgba(0,0,0,0.5); outline: none; border-radius: 4px; font-size: 18px; line-height: 1.8;
         }
 
-        /* نافذة الدردشة */
-        #chat-sidebar {
-            width: 320px; background: var(--chat-bg); border-right: 1px solid #333;
-            display: flex; flex-direction: column; transition: 0.3s;
-        }
-        .chat-header { padding: 15px; background: #1a1a1a; border-bottom: 1px solid #333; font-weight: bold; color: var(--primary); display: flex; justify-content: space-between; }
+        /* الدردشة الجانبية */
+        #chat-sidebar { width: 300px; background: var(--chat-bg); border-right: 1px solid #333; display: flex; flex-direction: column; }
+        .chat-header { padding: 15px; background: #1a1a1a; border-bottom: 1px solid #333; font-weight: bold; color: var(--primary); }
         #chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .msg { background: #222; padding: 10px; border-radius: 10px; font-size: 0.9rem; border-right: 3px solid var(--primary); }
-        .msg b { color: var(--primary); display: block; font-size: 0.7rem; margin-bottom: 3px; }
+        .msg { background: #1e1e1e; padding: 10px; border-radius: 8px; font-size: 0.85rem; border-right: 3px solid var(--primary); }
+        .msg b { color: var(--primary); display: block; font-size: 0.75rem; margin-bottom: 3px; }
+        
         .chat-input-area { padding: 15px; display: flex; gap: 5px; border-top: 1px solid #333; }
         #chat-input { flex: 1; background: #000; border: 1px solid #333; color: white; padding: 8px; border-radius: 5px; outline: none; }
 
         /* قائمة السلاش */
         #slash-menu {
             position: absolute; background: #1a1a1a; border: 1px solid var(--primary);
-            border-radius: 10px; width: 250px; display: none; z-index: 1000; padding: 8px;
+            border-radius: 10px; width: 220px; display: none; z-index: 1000; padding: 8px;
         }
-        .slash-item { padding: 10px; cursor: pointer; border-radius: 8px; display: flex; align-items: center; gap: 10px; }
+        .slash-item { padding: 10px; cursor: pointer; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
         .slash-item:hover { background: var(--primary); color: black; }
 
         footer { background: #000; padding: 10px 40px; border-top: 1px solid #222; display: flex; justify-content: space-between; font-size: 0.8rem; color: #555; }
@@ -62,28 +63,31 @@
 
     <div id="login-screen">
         <div class="login-card">
-            <h2 style="color:var(--primary)">HATIM SPACE PRO</h2>
-            <input type="text" id="user-name" placeholder="اسمك المستعار للدردشة">
-            <input type="password" id="pass" placeholder="كلمة المرور (1234)">
-            <button class="btn-entry" onclick="login()">دخول المنصة</button>
+            <h2>HATIM SPACE</h2>
+            <p>أدخل اسمك للانضمام إلى الفريق</p>
+            <input type="text" id="visitor-name" placeholder="اكتب اسمك هنا...">
+            <input type="password" id="access-pass" placeholder="كلمة مرور الفريق (1234)">
+            <button class="btn-entry" onclick="entry()">دخول المنصة</button>
+            <p id="login-err" style="color:#ff4444; display:none; margin-top:10px;">يرجى التأكد من البيانات</p>
         </div>
     </div>
 
     <header class="toolbar">
-        <div style="font-weight:bold; color:var(--primary); margin-left: 20px;">🪐 HATIM SPACE</div>
-        <button class="t-btn" onclick="f('bold')"><b>B</b></button>
-        <button class="t-btn" onclick="f('italic')"><i>I</i></button>
-        <button class="t-btn" onclick="f('insertUnorderedList')">• قائمة</button>
+        <div style="font-weight:bold; color:var(--primary); margin-left: 15px;">🪐 HATIM SPACE</div>
+        <button class="t-btn" onclick="f('bold')">B</button>
+        <button class="t-btn" onclick="f('italic')">I</button>
+        <button class="t-btn" onclick="f('underline')">U</button>
         <button class="t-btn" onclick="saveDoc()" style="background:#007bff">📥 تحميل</button>
-        <button class="t-btn" onclick="toggleChat()" id="chat-toggle">💬 إخفاء الدردشة</button>
-        <button class="t-btn" onclick="location.reload()" style="background:#bd2130; margin-right: auto;">🚪 خروج</button>
+        <button class="t-btn" onclick="toggleChat()" id="chat-toggle">💬 الدردشة</button>
+        <div style="margin-right:auto; font-size:0.8rem; color:var(--primary)" id="user-display"></div>
+        <button class="t-btn" onclick="location.reload()" style="background:#bd2130">🚪 خروج</button>
     </header>
 
     <div class="main-container">
         <div id="chat-sidebar">
-            <div class="chat-header"><span>الدردشة الجماعية</span> <small id="online-status">🟢 متصل</small></div>
+            <div class="chat-header">دردشة الفريق المباشرة</div>
             <div id="chat-messages">
-                <div class="msg"><b>النظام</b> أهلاً بكم في دردشة Hatim Space!</div>
+                <div class="msg"><b>النظام</b> أهلاً بك في فضاء العمل الجماعي!</div>
             </div>
             <div class="chat-input-area">
                 <input type="text" id="chat-input" placeholder="اكتب رسالة..." onkeypress="if(event.key==='Enter') sendMsg()">
@@ -93,8 +97,8 @@
 
         <div class="workspace">
             <div id="editor" contenteditable="true" spellcheck="false">
-                <h2>مساحة العمل الجماعية</h2>
-                <p>ابدأ بكتابة تقريرك أو مشروعك هنا...</p>
+                <h1 id="welcome-msg">مرحباً بكم في الفريق</h1>
+                <p>هذه المساحة مخصصة للعمل الجماعي. اكتب / لإضافة مهام أو جداول.</p>
             </div>
             <div id="slash-menu">
                 <div class="slash-item" onclick="insert('task')">✅ إضافة مهمة</div>
@@ -105,44 +109,50 @@
     </div>
 
     <footer>
-        <div>تم التطوير بواسطة: <b>Hatim Ait Ijjou</b></div>
-        <div id="char-count">عدد الحروف: 0</div>
+        <div>المبرمج الرئيسي: <b>Hatim Ait Ijjou</b></div>
+        <div id="status-bar">الحالة: متصل</div>
     </footer>
 
     <script>
-        let currentUser = "";
+        let userName = "";
         const editor = document.getElementById('editor');
         const menu = document.getElementById('slash-menu');
 
-        function login() {
-            const name = document.getElementById('user-name').value;
-            const pass = document.getElementById('pass').value;
-            if(name.length > 1 && pass === "1234") {
-                currentUser = name;
+        function entry() {
+            const nameInput = document.getElementById('visitor-name').value;
+            const passInput = document.getElementById('access-pass').value;
+            
+            if(nameInput.trim() !== "" && passInput === "1234") {
+                userName = nameInput;
                 document.getElementById('login-screen').style.display = 'none';
-            } else { alert("يرجى إدخال اسمك وكلمة المرور الصحيحة"); }
+                document.getElementById('user-display').innerText = "المستخدم: " + userName;
+                document.getElementById('welcome-msg').innerText = "مرحباً " + userName + " في Hatim Space";
+                
+                // إضافة رسالة دخول في الشات
+                addChatMessage("النظام", "انضم " + userName + " إلى منصة العمل.");
+            } else {
+                document.getElementById('login-err').style.display = 'block';
+            }
         }
 
         function toggleChat() {
             const chat = document.getElementById('chat-sidebar');
-            const btn = document.getElementById('chat-toggle');
-            if(chat.style.display === "none") {
-                chat.style.display = "flex";
-                btn.innerText = "💬 إخفاء الدردشة";
-            } else {
-                chat.style.display = "none";
-                btn.innerText = "💬 إظهار الدردشة";
-            }
+            chat.style.display = (chat.style.display === "none") ? "flex" : "none";
+        }
+
+        function addChatMessage(sender, text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = "msg";
+            msgDiv.innerHTML = `<b>${sender}</b> ${text}`;
+            const container = document.getElementById('chat-messages');
+            container.appendChild(msgDiv);
+            container.scrollTop = container.scrollHeight;
         }
 
         function sendMsg() {
             const input = document.getElementById('chat-input');
             if(input.value.trim() !== "") {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = "msg";
-                msgDiv.innerHTML = `<b>${currentUser}</b> ${input.value}`;
-                document.getElementById('chat-messages').appendChild(msgDiv);
-                document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+                addChatMessage(userName, input.value);
                 input.value = "";
             }
         }
@@ -157,17 +167,16 @@
                 if (text.endsWith('/')) {
                     const rect = range.getBoundingClientRect();
                     menu.style.display = 'block';
-                    menu.style.top = (rect.bottom + window.scrollY - 120) + 'px';
+                    menu.style.top = (rect.bottom + window.scrollY - 100) + 'px';
                     menu.style.left = rect.left + 'px';
                 } else { menu.style.display = 'none'; }
             }
-            document.getElementById('char-count').innerText = "عدد الحروف: " + editor.innerText.length;
         });
 
         function insert(type) {
             editor.focus(); document.execCommand('delete', false, null);
-            if(type === 'task') f('insertHTML', '<div style="background:#f0fdf4; padding:10px; border-right:4px solid #00ff41; margin:10px 0;">✅ مهمة للفريق: ...</div><br>');
-            if(type === 'table') f('insertHTML', '<table border="1" style="width:100%; border-collapse:collapse; background:white;"><tr><th>الاسم</th><th>المهمة</th></tr><tr><td>...</td><td>...</td></tr></table><br>');
+            if(type === 'task') f('insertHTML', '<div style="background:#f0fdf4; padding:10px; border-right:4px solid #00ff41; margin:10px 0; color:#222;">✅ مهمة جديدة: </div><br>');
+            if(type === 'table') f('insertHTML', '<table border="1" style="width:100%; border-collapse:collapse; background:white; color:black;"><tr><th>الاسم</th><th>الحالة</th></tr><tr><td>...</td><td>...</td></tr></table><br>');
             menu.style.display = 'none';
         }
 
@@ -175,7 +184,7 @@
             const blob = new Blob([editor.innerText], {type: "text/plain"});
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = "Hatim_Space_Shared.txt"; a.click();
+            a.download = "Shared_Work.txt"; a.click();
         }
 
         document.addEventListener('click', (e) => { if(e.target.id !== 'editor') menu.style.display = 'none'; });
