@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hatim Space | المبرمج حاتم ايت اجو</title>
+    <title>Hatim Space | Hatim Ait Ijjou</title>
     <style>
         :root { --primary: #00ff41; --bg: #050505; --glass: rgba(15, 15, 15, 0.95); }
         body { margin: 0; background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; }
@@ -16,7 +16,7 @@
         }
         .logo-box { text-align: center; }
         .logo-title { font-size: 3.5rem; color: var(--primary); text-shadow: 0 0 25px var(--primary); margin: 0; }
-        .dev-credit { color: #555; font-family: monospace; letter-spacing: 2px; margin-top: 5px; }
+        .dev-credit { color: #555; font-family: monospace; letter-spacing: 2px; margin-top: 5px; text-transform: uppercase; }
         .loader-wrap { width: 200px; height: 2px; background: #111; margin-top: 30px; border-radius: 10px; overflow: hidden; }
         .bar { width: 0%; height: 100%; background: var(--primary); transition: 0.3s; box-shadow: 0 0 10px var(--primary); }
 
@@ -26,7 +26,7 @@
 
         .editor-zone { flex: 1; padding: 50px 20px; overflow-y: auto; display: flex; justify-content: center; position: relative; }
         #editor { width: 100%; max-width: 800px; outline: none; font-size: 1.3rem; line-height: 1.8; color: #e0e0e0; min-height: 60vh; }
-        #editor:empty:before { content: "اكتب / للأوامر (حفظ، تحميل، مسح)..."; color: #333; }
+        #editor:empty:before { content: "اكتب / للأوامر (تحميل، حفظ، مسح)..."; color: #333; }
 
         /* قائمة السلاش (Slash Menu) */
         #slash-menu {
@@ -34,13 +34,9 @@
             border-radius: 10px; width: 260px; display: none; z-index: 1000;
             box-shadow: 0 20px 50px rgba(0,0,0,0.8); padding: 6px; backdrop-filter: blur(15px);
         }
-        .slash-item {
-            padding: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px;
-            border-radius: 6px; transition: 0.2s; font-size: 0.9rem; color: #ccc;
-        }
+        .slash-item { padding: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; border-radius: 6px; transition: 0.2s; font-size: 0.9rem; color: #ccc; }
         .slash-item:hover { background: var(--primary); color: black; font-weight: bold; }
 
-        /* تذييل الصفحة */
         footer { padding: 12px; text-align: center; background: #080808; border-top: 1px solid #111; font-size: 0.8rem; color: #444; }
         .highlight { color: var(--primary); font-weight: bold; }
     </style>
@@ -50,7 +46,7 @@
     <div id="splash">
         <div class="logo-box">
             <h1 class="logo-title">HATIM SPACE</h1>
-            <div class="dev-credit">BY HATIM AIT AGGOU</div>
+            <div class="dev-credit">BY HATIM AIT IJJOU</div>
         </div>
         <div class="loader-wrap"><div class="bar" id="bar"></div></div>
     </div>
@@ -69,7 +65,6 @@
             
             <div id="slash-menu">
                 <div class="slash-item" onclick="exec('download')"><b>📥</b> تحميل ملف (Download File)</div>
-                <div class="slash-item" onclick="exec('save')"><b>💾</b> حفظ سريع في المتصفح</div>
                 <div class="slash-item" onclick="exec('clear')"><b>🗑️</b> مسح كل المحتوى</div>
                 <div class="slash-item" onclick="exec('rate')"><b>⭐</b> تقييم المبرمج حاتم</div>
             </div>
@@ -85,7 +80,7 @@
         const editor = document.getElementById('editor');
         const menu = document.getElementById('slash-menu');
 
-        // 1. نظام الإقلاع (Splash)
+        // نظام الإقلاع
         window.onload = () => {
             let p = 0;
             const boot = setInterval(() => {
@@ -105,12 +100,12 @@
             }, 100);
         };
 
-        // 2. الساعة
+        // الساعة
         setInterval(() => {
             document.getElementById('clock').innerText = new Date().toLocaleTimeString('ar-MA');
         }, 1000);
 
-        // 3. تفعيل السلاش (Slash Command)
+        // نظام السلاش
         editor.addEventListener('keyup', (e) => {
             const sel = window.getSelection();
             if (sel.rangeCount > 0) {
@@ -127,40 +122,33 @@
             }
         });
 
-        // 4. تنفيذ الأوامر (Command Executor)
+        // تنفيذ الأوامر
         function exec(cmd) {
-            editor.innerHTML = editor.innerHTML.replace('/', ''); // مسح السلاش
+            editor.innerHTML = editor.innerHTML.replace('/', ''); 
             menu.style.display = 'none';
 
             if (cmd === 'download') {
-                // استخراج النص فقط من المحرر
                 const textContent = editor.innerText || editor.textContent;
                 const blob = new Blob([textContent], {type: "text/plain;charset=utf-8"});
                 const link = document.createElement("a");
                 link.href = URL.createObjectURL(blob);
                 link.download = "Hatim_Space_Note.txt";
                 link.click();
-                URL.revokeObjectURL(link.href);
             } 
-            else if (cmd === 'save') {
-                localStorage.setItem('hatim_space_save', editor.innerHTML);
-                alert("تم الحفظ في ذاكرة المتصفح بنجاح! ✅");
-            }
             else if (cmd === 'clear') {
-                if(confirm("هل تريد إفراغ المساحة نهائياً؟")) editor.innerHTML = "";
+                if(confirm("هل تريد مسح المساحة؟")) editor.innerHTML = "";
             }
             else if (cmd === 'rate') {
                 let r = prompt("قيم عمل المبرمج حاتم ايت اجو من 5:");
-                if(r) fetch(GETFORM, { method: 'POST', body: JSON.stringify({Dev: 'Hatim Ait Aggou', Rating: r}) });
+                if(r) fetch(GETFORM, { method: 'POST', body: JSON.stringify({Dev: 'Hatim Ait Ijjou', Rating: r}) });
             }
         }
 
-        // 5. الحفظ التلقائي عند الكتابة
+        // الحفظ التلقائي
         editor.addEventListener('input', () => {
             localStorage.setItem('hatim_space_save', editor.innerHTML);
         });
 
-        // إغلاق القائمة عند النقر خارجاً
         document.addEventListener('click', (e) => {
             if (e.target.id !== 'editor') menu.style.display = 'none';
         });
