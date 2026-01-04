@@ -11,13 +11,13 @@
 *{box-sizing:border-box;font-family:'Cairo',sans-serif;}
 body,html{margin:0;padding:0;height:100vh;overflow:hidden;color:var(--text);background:var(--bg);}
 
-/* خلفية فضائية */
+/* خلفية النجوم */
 #stars{position:fixed;inset:0;z-index:-1;background:#000;overflow:hidden;}
 .star{position:absolute;background:white;border-radius:50%;animation:twinkle 5s infinite;}
 @keyframes twinkle{0%,100%{opacity:0.3;}50%{opacity:1;}}
 
 /* شاشة الدخول */
-#login-screen{position:fixed;inset:0;z-index:9999;display:flex;justify-content:center;align-items:center;transition:0.5s;}
+#login-screen{position:fixed;inset:0;z-index:9999;display:flex;justify-content:center;align-items:center;}
 .login-card{background:var(--glass);backdrop-filter:blur(25px);padding:60px;border-radius:40px;border:1px solid rgba(0,255,65,0.2);width:450px;text-align:center;box-shadow:0 0 100px rgba(0,255,65,0.2);}
 .dev-badge{color:var(--primary);font-weight:bold;letter-spacing:2px;margin-bottom:20px;display:block;}
 .main-logo{font-size:3.5rem;font-weight:900;background:linear-gradient(45deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:30px;}
@@ -41,7 +41,6 @@ body,html{margin:0;padding:0;height:100vh;overflow:hidden;color:var(--text);back
 .editor-side{flex:1;padding:40px;overflow-y:auto;background:rgba(0,0,0,0.5);position:relative;}
 #paper{width:100%;max-width:850px;min-height:1100px;margin:auto;padding:80px;background:white;color:#111;border-radius:8px;outline:none;font-size:18px;line-height:1.8;box-shadow:0 0 50px rgba(0,0,0,0.5);}
 
-/* قائمة السلاش */
 #slash-menu{position:absolute;width:240px;background:#1a1a1a;border:1px solid var(--primary);border-radius:12px;display:none;z-index:1000;padding:8px;}
 .s-item{padding:10px;cursor:pointer;color:white;border-radius:8px;font-size:14px;display:flex;align-items:center;gap:10px;}
 .s-item:hover{background:var(--primary);color:black;font-weight:bold;}
@@ -74,11 +73,11 @@ body,html{margin:0;padding:0;height:100vh;overflow:hidden;color:var(--text);back
     <button class="btn" onclick="downloadHTML()">⬇️ تحميل</button>
     <button class="btn" onclick="uploadBG()">🖼️ خلفية مخصصة</button>
   </div>
-  <button class="btn" style="background:#ff4d4d;" onclick="location.reload()">خروج</button>
+  <button class="btn" style="background:#ff4d4d;" onclick="exitOS()">خروج</button>
 </header>
 
 <div class="workspace">
-  <!-- دردشة الذكاء -->
+  <!-- دردشة AI -->
   <div class="ai-chat-side">
     <div style="padding:15px; border-bottom:1px solid #222; color:var(--primary); font-weight:bold;">🤖 HATIM AI ENGINE</div>
     <div id="chat-flow"></div>
@@ -93,11 +92,6 @@ body,html{margin:0;padding:0;height:100vh;overflow:hidden;color:var(--text);back
       <h1 style="text-align:center;">إبداع جديد بقلم حاتم آيت أجو ✍️</h1>
       <p>اكتب <b>/</b> لتشغيل القوى الخارقة للذكاء الاصطناعي...</p>
     </div>
-    <div id="slash-menu">
-      <div class="s-item" onclick="aiWrite('story')">📖 AI: تأليف قصة أسطورية</div>
-      <div class="s-item" onclick="aiWrite('code')">💻 AI: إنشاء كود برمجى</div>
-      <div class="s-item" onclick="insTable()">📊 إدراج جدول بيانات</div>
-    </div>
   </div>
 </div>
 </div>
@@ -105,9 +99,9 @@ body,html{margin:0;padding:0;height:100vh;overflow:hidden;color:var(--text);back
 <div class="signature-footer">برمج من طرف <span>حاتم آيت أجو</span> | 2026</div>
 
 <script>
-// إنشاء النجوم
+// النجوم
 for(let i=0;i<120;i++){
-  const s = document.createElement('div');
+  const s=document.createElement('div');
   s.className='star';
   const size=Math.random()*3+1+'px';
   s.style.width=size;
@@ -117,7 +111,7 @@ for(let i=0;i<120;i++){
   document.getElementById('stars').appendChild(s);
 }
 
-// تشغيل النظام
+// فتح النظام
 function launchOS(){
   const name=document.getElementById('captain-name').value.trim();
   if(!name){alert("يرجى إدخال اسمك!"); return;}
@@ -125,39 +119,42 @@ function launchOS(){
   document.getElementById('app-interface').style.display='flex';
 }
 
-// AI chat
-function aiChat(){
-  const input=document.getElementById('ai-in');
-  if(!input.value) return;
-  const userBubble=document.createElement('div'); userBubble.className='bubble user'; userBubble.innerText=input.value;
-  document.getElementById('chat-flow').appendChild(userBubble);
-  input.value='';
-  setTimeout(()=>{
-    const aiBubble=document.createElement('div'); aiBubble.className='bubble ai';
-    const responses=["مرحباً أيها القائد! ما الذي تريد أن نبدعه اليوم؟","سأكتب لك قصة أسطورية!","دعنا نبرمج شيئاً رائعاً الآن..."];
-    aiBubble.innerText=responses[Math.floor(Math.random()*responses.length)];
-    document.getElementById('chat-flow').appendChild(aiBubble);
-    document.getElementById('chat-flow').scrollTop=document.getElementById('chat-flow').scrollHeight;
-  },700);
+// خروج
+function exitOS(){
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app-interface').style.display='none';
 }
 
 // أوامر النص
 function execCmd(cmd,val=null){document.execCommand(cmd,false,val);}
-function aiWrite(type){
-  const content=type==='story'?"في عالم يحكمه الكود، برز اسم حاتم كقائد للثورة التقنية...":"console.log('مشروع عالمي!');";
-  document.getElementById('paper').innerHTML+=`<p style="color:var(--primary);">${content}</p>`;
-}
-function insTable(){document.getElementById('paper').innerHTML+=`<table border="1" style="width:100%; border-collapse:collapse;"><tr><td>بيانات</td><td>قيم</td></tr></table>`;}
+function insTable(){document.getElementById('paper').innerHTML+=`<table border="1" style="width:100%;border-collapse:collapse;"><tr><td>بيانات</td><td>قيم</td></tr></table>`;}
 function insSlide(){document.getElementById('paper').innerHTML+=`<div style="background:#111;color:white;padding:40px;border-radius:15px;text-align:center;"><h2>شريحة أسطورية</h2></div>`;}
 function uploadBG(){
   const input=document.createElement('input'); input.type='file'; input.accept='image/*,video/*';
-  input.onchange=e=>{const url=URL.createObjectURL(e.target.files[0]); document.getElementById('stars').style.background=`url('${url}') center/cover no-repeat`;}
+  input.onchange=e=>{
+    const url=URL.createObjectURL(e.target.files[0]);
+    document.getElementById('stars').style.background=`url('${url}') center/cover no-repeat`;
+  }
   input.click();
 }
 function downloadHTML(){
   const blob=new Blob([document.getElementById('paper').innerHTML],{type:'text/html'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='hatim_space_content.html'; a.click();
 }
+
+// دردشة AI
+function aiChat(){
+  const input=document.getElementById('ai-in'); if(!input.value) return;
+  const userBubble=document.createElement('div'); userBubble.className='bubble user'; userBubble.innerText=input.value;
+  document.getElementById('chat-flow').appendChild(userBubble); input.value='';
+  setTimeout(()=>{
+    const aiBubble=document.createElement('div'); aiBubble.className='bubble ai';
+    aiBubble.innerText="مرحباً! كيف يمكنني مساعدتك اليوم؟";
+    document.getElementById('chat-flow').appendChild(aiBubble);
+    document.getElementById('chat-flow').scrollTop=document.getElementById('chat-flow').scrollHeight;
+  },700);
+}
 </script>
 </body>
 </html>
+
