@@ -2,425 +2,364 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HATIM OS | Global Empire v2</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ZENITH OS ULTRA | Global Edition</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#000000">
 
     <style>
         :root {
-            --primary: #d4af37; /* ذهبي */
-            --glass-strong: rgba(18, 18, 18, 0.9);
-            --border: rgba(212, 175, 55, 0.3);
-            --text: #eee;
-            --taskbar-h: 60px;
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --accent: #f80759;
+            --glass-bg: rgba(20, 20, 30, 0.75);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+            --blur: blur(25px);
+            --font: 'Tajawal', sans-serif;
+            --shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
 
-        * { box-sizing: border-box; user-select: none; font-family: 'Tajawal', sans-serif; }
-        body { margin: 0; overflow: hidden; height: 100vh; background: #000; color: var(--text); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font); user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { background: #000; height: 100vh; overflow: hidden; color: #fff; }
 
-        /* الخلفية */
-        #wallpaper {
-            position: fixed; inset: 0;
-            background: url('https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=2070') center/cover;
-            filter: brightness(0.5); z-index: -2;
+        /* --- Boot Screen --- */
+        #boot-screen {
+            position: fixed; inset: 0; background: #000; z-index: 99999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 1s;
         }
+        .loader { width: 200px; height: 4px; background: #333; margin-top: 20px; border-radius: 2px; overflow: hidden; }
+        .bar { width: 0%; height: 100%; background: var(--primary); transition: 2s; }
 
-        /* الشريط العلوي */
-        #top-bar {
-            position: fixed; top: 0; left: 0; right: 0; height: 30px;
-            background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; font-size: 0.8rem; z-index: 5000; border-bottom: 1px solid var(--border);
-        }
-        .live-dot { width:8px; height:8px; background:red; border-radius:50%; display:inline-block; animation:blink 1s infinite; margin-right:5px; }
-        @keyframes blink { 50% {opacity:0.3;} }
+        /* --- UI Elements --- */
+        #wallpaper { position: fixed; inset: 0; z-index: -1; background: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?q=80&w=2072') center/cover; transition: 0.5s; }
+        #wallpaper::after { content:''; position:absolute; inset:0; background:rgba(0,0,0,0.3); }
 
-        /* سطح المكتب */
-        #desktop {
-            position: absolute; inset: 0; top: 30px; bottom: var(--taskbar-h);
-            padding: 30px; display: flex; flex-direction: column; flex-wrap: wrap; align-content: flex-start; gap: 20px;
-        }
-        .app-icon {
-            width: 90px; display: flex; flex-direction: column; align-items: center; cursor: pointer;
-            text-shadow: 0 2px 5px black; transition: 0.3s; position: relative;
-        }
-        .app-icon:hover { transform: scale(1.1); }
-        .icon-box {
-            width: 65px; height: 65px; border-radius: 18px; display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; margin-bottom: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.6);
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(0,0,0,0.2));
-            border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(5px);
-        }
-        .del-btn { position: absolute; top: -5px; right: 10px; background: red; width: 20px; height: 20px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 10px; }
-        .app-icon:hover .del-btn { display: flex; }
+        #topbar { height: 35px; background: rgba(0,0,0,0.3); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 0.85rem; font-weight: bold; z-index: 5000; border-bottom: var(--glass-border); }
 
-        /* النوافذ */
-        .window {
-            position: absolute; background: var(--glass-strong); backdrop-filter: blur(40px);
-            border: 1px solid var(--border); border-radius: 10px;
-            display: flex; flex-direction: column; box-shadow: 0 40px 100px rgba(0,0,0,1);
-            min-width: 400px; min-height: 300px; resize: both; overflow: hidden;
-            animation: pop 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-        @keyframes pop { from{transform:scale(0.9);opacity:0;} to{transform:scale(1);opacity:1;} }
+        #desktop { position: absolute; inset: 0; top: 35px; bottom: 80px; padding: 20px; display: flex; gap: 20px; }
+        .icon-grid { display: flex; flex-direction: column; flex-wrap: wrap; gap: 15px; height: 100%; align-content: flex-start; }
+        
+        .app-icon { width: 85px; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; text-shadow: 0 2px 4px black; border-radius: 10px; padding: 5px; }
+        .app-icon:hover { background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); }
+        .icon-box { width: 60px; height: 60px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 2rem; background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.01)); border: var(--glass-border); box-shadow: 0 5px 15px rgba(0,0,0,0.3); margin-bottom: 5px; }
 
-        .win-header {
-            height: 40px; background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center; padding: 0 15px; cursor: grab;
-        }
-        .win-title { font-weight: bold; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .widget-area { margin-right: auto; width: 300px; display: flex; flex-direction: column; gap: 15px; }
+        .widget { background: var(--glass-bg); backdrop-filter: var(--blur); border-radius: 20px; padding: 20px; border: var(--glass-border); box-shadow: var(--shadow); transition: 0.3s; }
+        .widget:hover { transform: scale(1.02); }
+
+        #dock-container { position: fixed; bottom: 15px; left: 0; right: 0; display: flex; justify-content: center; z-index: 9000; }
+        #dock { background: rgba(20, 20, 30, 0.85); backdrop-filter: blur(30px); padding: 10px 20px; border-radius: 24px; border: var(--glass-border); display: flex; gap: 15px; align-items: flex-end; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .dock-item { width: 50px; height: 50px; border-radius: 14px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; transition: 0.2s cubic-bezier(0.25, 1, 0.5, 1); position: relative; border-bottom: 2px solid transparent; }
+        .dock-item:hover { transform: translateY(-15px) scale(1.2); background: rgba(255,255,255,0.2); margin: 0 10px; }
+        .dock-item.active::after { content:''; position:absolute; bottom:-5px; width:5px; height:5px; background:var(--primary); border-radius:50%; }
+
+        /* Window System */
+        .window { position: absolute; background: #121212; border-radius: 12px; border: 1px solid #333; display: flex; flex-direction: column; box-shadow: 0 30px 60px rgba(0,0,0,0.7); min-width: 350px; min-height: 250px; overflow: hidden; animation: popIn 0.3s cubic-bezier(0.1, 0.9, 0.2, 1); resize: both; }
+        @keyframes popIn { from{opacity:0; transform:scale(0.9);} to{opacity:1; transform:scale(1);} }
+        .win-head { height: 40px; background: #1c1c24; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; cursor: grab; border-bottom: 1px solid #333; }
         .win-controls { display: flex; gap: 8px; }
-        .win-btn { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
-        .close { background: #ff5f57; } .max { background: #28c840; }
+        .win-dot { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; transition: 0.2s; }
+        .close { background: #ff5f57; } .close:hover { filter: brightness(0.8); }
+        .min { background: #febc2e; }
+        .max { background: #28c840; }
+        .win-body { flex: 1; position: relative; overflow: hidden; background: #0e0e12; }
 
-        .win-body { flex: 1; overflow: hidden; position: relative; background: rgba(255,255,255,0.02); }
+        #start-menu { position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%) translateY(20px); width: 320px; background: rgba(20,20,30,0.95); backdrop-filter: blur(40px); border: var(--glass-border); border-radius: 20px; padding: 20px; display: none; flex-direction: column; gap: 15px; opacity: 0; transition: 0.3s; z-index: 8999; }
+        #start-menu.show { display: flex; transform: translateX(-50%) translateY(0); opacity: 1; }
+        .start-item { display: flex; align-items: center; gap: 15px; padding: 10px; border-radius: 10px; cursor: pointer; transition: 0.2s; }
+        .start-item:hover { background: rgba(255,255,255,0.1); }
 
-        /* شريط المهام */
-        #taskbar {
-            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 95%; height: var(--taskbar-h);
-            background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(20px);
-            border: 1px solid var(--border); border-radius: 20px;
-            display: flex; align-items: center; padding: 0 20px; z-index: 10000; box-shadow: 0 10px 40px black;
-        }
-        .start-btn { font-size: 2.2rem; color: var(--primary); cursor: pointer; transition: 0.3s; margin-left:15px; }
-        .start-btn:hover { transform: scale(1.1); filter: drop-shadow(0 0 10px var(--primary)); }
+        #toast { position: fixed; top: 50px; right: 20px; background: rgba(20,20,30,0.9); border-left: 4px solid var(--primary); padding: 15px; border-radius: 8px; transform: translateX(150%); transition: 0.5s; z-index: 9999; }
+
+        /* App Specific Styles */
+        .browser-bar { display: flex; gap: 10px; padding: 8px; background: #222; }
+        .url-in { flex: 1; background: #111; border: none; color: white; padding: 5px 10px; border-radius: 5px; }
+        .paint-tools { padding: 10px; background: #222; display: flex; gap: 10px; justify-content: center; }
+        .color-dot { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 2px solid #555; }
+        .color-dot.active { border-color: white; transform: scale(1.2); }
+        .term-box { background: #0c0c0c; color: #0f0; padding: 15px; font-family: monospace; height: 100%; overflow-y: auto; }
+        .term-in { background: transparent; border: none; color: #0f0; outline: none; width: 100%; font-family: monospace; }
         
-        .dock { display: flex; gap: 10px; flex: 1; margin: 0 20px; }
-        .dock-item {
-            width: 45px; height: 45px; border-radius: 12px; background: rgba(255,255,255,0.05);
-            display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer;
-            transition: 0.2s; position: relative; border-bottom: 2px solid transparent;
-        }
-        .dock-item:hover { background: rgba(255,255,255,0.15); transform: translateY(-5px); }
-        .dock-item.active { border-color: var(--primary); }
-
-        /* --- تصميم مدير الملفات (H-Files) --- */
-        .fm-layout { display: flex; height: 100%; }
-        .fm-sidebar { width: 150px; background: rgba(0,0,0,0.3); border-left: 1px solid #333; padding: 10px; display: flex; flex-direction: column; gap: 5px; }
-        .fm-side-item { padding: 8px; cursor: pointer; border-radius: 5px; font-size: 0.9rem; color: #aaa; }
-        .fm-side-item:hover, .fm-side-item.active { background: rgba(255,255,255,0.1); color: white; }
-        
-        .fm-main { flex: 1; display: flex; flex-direction: column; }
-        .fm-toolbar { height: 40px; border-bottom: 1px solid #333; display: flex; align-items: center; padding: 0 10px; gap: 10px; background: rgba(0,0,0,0.2); }
-        .fm-path { background: #222; padding: 5px 10px; border-radius: 4px; flex: 1; font-family: monospace; font-size: 0.9rem; color: var(--primary); }
-        .fm-btn { background: none; border: 1px solid #444; color: white; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
-        .fm-btn:hover { background: #444; }
-
-        .fm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 15px; padding: 15px; overflow-y: auto; flex: 1; }
-        .file-item { display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; padding: 10px; border-radius: 5px; }
-        .file-item:hover { background: rgba(255,255,255,0.1); }
-        .file-icon { font-size: 2.5rem; margin-bottom: 5px; }
-        .file-name { font-size: 0.85rem; word-break: break-all; }
-
-        /* H-Chat */
-        .chat-layout { display: flex; height: 100%; }
-        .chat-sidebar { width: 220px; background: #111; border-left: 1px solid #333; overflow-y: auto; }
-        .chat-contact { padding: 12px; border-bottom: 1px solid #222; cursor: pointer; display: flex; align-items: center; gap: 10px; }
-        .chat-contact:hover { background: #222; }
-        .chat-msgs { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #0b0b0b; }
-        .chat-bubble { max-width: 70%; padding: 10px 15px; border-radius: 10px; font-size: 0.9rem; }
-        .chat-bubble.in { background: #333; align-self: flex-start; }
-        .chat-bubble.out { background: var(--primary); color: black; align-self: flex-end; }
-
-        /* المتجر */
-        .store-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 20px; }
-        .store-item { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid transparent; transition:0.3s; }
-        .store-item:hover { border-color: var(--primary); transform: translateY(-5px); }
+        /* Game Styles */
+        .xo-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; width: 200px; margin: 20px auto; }
+        .xo-cell { width: 60px; height: 60px; background: #222; display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer; border-radius: 5px; }
+        .xo-cell:hover { background: #333; }
 
     </style>
 </head>
 <body>
 
-    <div id="wallpaper"></div>
+<!-- Boot Screen -->
+<div id="boot-screen">
+    <h1 style="letter-spacing: 5px; margin-bottom: 20px; color: var(--primary);">ZENITH GLOBAL</h1>
+    <div class="loader"><div class="bar" id="load-bar"></div></div>
+    <div style="margin-top: 10px; font-size: 0.8rem; color: #aaa;">Connecting to Global Servers...</div>
+</div>
 
-    <div id="top-bar">
-        <div>
-            <span class="live-dot"></span> <span style="font-weight:bold; color:var(--primary);">GLOBAL SERVER</span>
-            <span style="color:#666; margin:0 10px;">|</span>
-            Users: <span id="users-cnt" style="color:white;">9,430,211</span>
+<div id="wallpaper"></div>
+
+<div id="topbar">
+    <div style="display:flex; gap:15px; align-items:center;">
+        <i class="fab fa-battle-net" style="font-size:1.2rem; color:var(--primary);"></i>
+        <span>ZENITH ULTRA</span>
+        <span style="font-size:0.7rem; color:#aaa; margin-right:10px;">Live Users: <span id="live-users" style="color:var(--primary)">1,024,300</span></span>
+    </div>
+    <div style="display:flex; gap:15px; align-items:center;">
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-full"></i>
+        <span id="clock">12:00</span>
+    </div>
+</div>
+
+<div id="desktop">
+    <div class="icon-grid" id="icons"></div>
+    <div class="widget-area">
+        <div class="widget" style="background: linear-gradient(135deg, #FF9D6C, #BB4E75);">
+            <h3><i class="fas fa-sun"></i> الطقس</h3>
+            <h1 style="font-size:3rem; margin:10px 0;">24°</h1>
+            <p>الدار البيضاء، المغرب</p>
         </div>
-        <div id="clock">12:00</div>
+        <div class="widget">
+            <h3 style="color:var(--primary)">حالة النظام</h3>
+            <div style="margin-top:10px; height:5px; background:#333; border-radius:5px; overflow:hidden;">
+                <div style="width:45%; height:100%; background:var(--primary);"></div>
+            </div>
+            <div style="font-size:0.8rem; margin-top:5px; display:flex; justify-content:space-between;">
+                <span>CPU: 45%</span> <span>RAM: 3.2GB</span>
+            </div>
+        </div>
     </div>
+</div>
 
-    <!-- سطح المكتب -->
-    <div id="desktop"></div>
-    <div id="win-layer"></div>
+<div id="win-layer"></div>
 
-    <div id="taskbar">
-        <div class="start-btn" onclick="openWin('store')"><i class="fab fa-fort-awesome"></i></div>
-        <div class="dock" id="dock"></div>
-        <div style="font-size:0.8rem; color:#666;">Hatim OS v12.0</div>
+<div id="start-menu">
+    <div style="font-weight:bold; color:#aaa; margin-bottom:5px;">التطبيقات</div>
+    <div id="start-list"></div>
+    <div style="margin-top:10px; border-top:1px solid #444; padding-top:10px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:30px; height:30px; background:var(--primary); border-radius:50%; display:flex; align-items:center; justify-content:center; color:black;">H</div>
+            <span>القائد حاتم</span>
+        </div>
+        <i class="fas fa-power-off" onclick="location.reload()" style="cursor:pointer; color:#ff5f57;"></i>
     </div>
+</div>
 
-    <script>
-        // --- Core Data ---
-        const sys = {
-            apps: [], 
-            zIndex: 100,
-            storageKey: 'hatim_global_v2'
-        };
+<div id="dock-container">
+    <div id="dock">
+        <div class="dock-item" onclick="toggleStart()"><i class="fas fa-th" style="color:#fff;"></i></div>
+        <div style="width:1px; height:30px; background:rgba(255,255,255,0.2); margin:0 5px;"></div>
+        <div id="dock-apps" style="display:flex; gap:15px;"></div>
+    </div>
+</div>
 
-        const db = {
-            'store': { name: 'المتجر الملكي', icon: 'fas fa-store', color: '#d4af37', core: true, render: renderStore },
-            'files': { name: 'ملفاتي (H-Files)', icon: 'fas fa-folder-open', color: '#ffca28', core: true, render: renderFiles, init: initFiles },
-            'chat': { name: 'H-Chat', icon: 'fab fa-whatsapp', color: '#25d366', render: renderChat, init: initChat },
-            'writer': { name: 'H-Writer', icon: 'fas fa-pen-fancy', color: '#2979ff', render: renderWriter },
-            'sheets': { name: 'H-Sheets', icon: 'fas fa-table', color: '#43a047', render: renderSheets },
-            'media': { name: 'H-Media', icon: 'fas fa-play-circle', color: '#f50057', render: renderMedia },
-            'gallery': { name: 'المعرض', icon: 'fas fa-images', color: '#aa00ff', render: renderGallery },
-            'browser': { name: 'انترنت', icon: 'fas fa-globe', color: '#00b0ff', type: 'iframe', url: 'https://www.wikipedia.org' }
-        };
+<div id="toast">مرحباً بك في ZENITH ULTRA GLOBAL 🌍</div>
 
-        // --- File System Data (Simulated) ---
-        let fileSystem = [
-            { id: 1, parent: 'root', name: 'خطط سرية', type: 'folder' },
-            { id: 2, parent: 'root', name: 'صور المعجبين', type: 'folder' },
-            { id: 3, parent: 'root', name: 'أكواد نووية.txt', type: 'file' },
-            { id: 4, parent: 'root', name: 'رسالة من إيلون ماسك.txt', type: 'file' },
-            { id: 5, parent: 1, name: 'خطة 2030.txt', type: 'file' }
-        ];
+<script>
+// --- CORE SYSTEM ---
+const System = { 
+    zIndex: 100, 
+    apps: {
+        'files': { name: 'الملفات', icon: 'fas fa-folder', color: '#ffca28', type: 'files' },
+        'browser': { name: 'المتصفح', icon: 'fas fa-globe', color: '#00d2ff', type: 'web', url: 'https://bing.com' },
+        'store': { name: 'المتجر', icon: 'fas fa-store', color: '#f50057', type: 'store' },
+        'term': { name: 'Terminal', icon: 'fas fa-terminal', color: '#00e676', type: 'term' },
+        'paint': { name: 'الرسام', icon: 'fas fa-palette', color: '#d500f9', type: 'paint' },
+        'media': { name: 'ميديا', icon: 'fas fa-play-circle', color: '#ff3d00', type: 'iframe', url: 'https://www.youtube.com/embed/jfKfPfyJRdk' },
+        'notes': { name: 'الملاحظات', icon: 'fas fa-sticky-note', color: '#ffea00', type: 'notes' },
+        'settings': { name: 'الإعدادات', icon: 'fas fa-cog', color: '#b0bec5', type: 'settings' },
+        'games': { name: 'ألعاب', icon: 'fas fa-gamepad', color:'#ff5722', type:'games' }
+    },
 
-        // --- Init ---
-        window.onload = () => {
-            const saved = localStorage.getItem(sys.storageKey);
-            sys.apps = saved ? JSON.parse(saved) : ['store', 'files', 'chat'];
-            refreshDesk();
-            updateStats();
-        };
+    init: function(){
+        this.renderUI(); 
+        this.startTime(); 
+        this.bootSim();
+        this.liveUsers();
+    },
 
-        function refreshDesk() {
-            const d = document.getElementById('desktop');
-            d.innerHTML = '';
-            sys.apps.forEach(id => {
-                const app = db[id];
-                if(app) {
-                    d.innerHTML += `
-                    <div class="app-icon" onclick="openWin('${id}')">
-                        <div class="icon-box" style="color:${app.color}"><i class="${app.icon}"></i></div>
-                        <span>${app.name}</span>
-                        ${!app.core ? `<div class="del-btn" onclick="event.stopPropagation(); uninstall('${id}')">x</div>` : ''}
-                    </div>`;
-                }
-            });
-        }
+    bootSim: function() {
+        setTimeout(() => document.getElementById('load-bar').style.width = '100%', 100);
+        setTimeout(() => {
+            document.getElementById('boot-screen').style.opacity = '0';
+            setTimeout(() => document.getElementById('boot-screen').style.display = 'none', 1000);
+            this.showToast('تم الاتصال بالخادم العالمي ✅');
+        }, 2500);
+    },
 
-        // --- Window Manager ---
-        function openWin(id) {
-            const app = db[id];
-            const wid = 'win-' + Date.now();
-            const w = document.createElement('div');
-            w.className = 'window';
-            w.id = wid;
-            w.style.zIndex = ++sys.zIndex;
-            w.style.left = (50+Math.random()*50)+'px'; w.style.top=(50+Math.random()*50)+'px';
-            w.style.width = '750px'; w.style.height='500px';
+    liveUsers: function() {
+        const el = document.getElementById('live-users');
+        let count = 1024300;
+        setInterval(() => {
+            count += Math.floor(Math.random() * 50) - 20;
+            el.innerText = count.toLocaleString();
+        }, 2000);
+    },
 
-            let content = '';
-            if(app.type === 'iframe') content = `<iframe src="${app.url}" style="width:100%; height:100%; border:none;"></iframe>`;
-            else if(app.render) content = app.render(wid);
-
-            w.innerHTML = `
-                <div class="win-header" onmousedown="drag(event, '${wid}')">
-                    <div class="win-title"><i class="${app.icon}"></i> ${app.name}</div>
-                    <div class="win-controls">
-                        <div class="win-btn close" onclick="closeWin('${wid}')"></div>
-                    </div>
-                </div>
-                <div class="win-body">${content}</div>
-            `;
-            w.onmousedown = () => w.style.zIndex = ++sys.zIndex;
-            document.getElementById('win-layer').appendChild(w);
-            addDock(wid, app);
-            if(app.init) app.init(wid);
-        }
-
-        function closeWin(wid) {
-            document.getElementById(wid).remove();
-            document.getElementById('dock-'+wid).remove();
-        }
-
-        function addDock(wid, app) {
-            const d = document.getElementById('dock');
-            d.innerHTML += `<div class="dock-item active" id="dock-${wid}"><i class="${app.icon}" style="color:${app.color}"></i></div>`;
-        }
-
-        function drag(e, wid) {
-            if(e.target.closest('.win-controls')) return;
-            const w = document.getElementById(wid);
-            const dx = e.clientX - w.offsetLeft;
-            const dy = e.clientY - w.offsetTop;
-            document.onmousemove = (ev) => { w.style.left = (ev.clientX-dx)+'px'; w.style.top=(ev.clientY-dy)+'px'; };
-            document.onmouseup = () => document.onmousemove = null;
-        }
-
-        // --- H-Files Logic ---
-        function renderFiles(wid) {
-            return `
-            <div class="fm-layout">
-                <div class="fm-sidebar">
-                    <div class="fm-side-item active"><i class="fas fa-hdd"></i> القرص C:</div>
-                    <div class="fm-side-item"><i class="fas fa-cloud"></i> السحابة</div>
-                    <div class="fm-side-item"><i class="fas fa-trash"></i> المحذوفات</div>
-                </div>
-                <div class="fm-main">
-                    <div class="fm-toolbar">
-                        <button class="fm-btn" onclick="fmUp('${wid}')"><i class="fas fa-arrow-up"></i></button>
-                        <div class="fm-path" id="path-${wid}">Root</div>
-                        <button class="fm-btn" onclick="fmNewFolder('${wid}')"><i class="fas fa-folder-plus"></i></button>
-                        <button class="fm-btn" onclick="fmNewFile('${wid}')"><i class="fas fa-file-alt"></i></button>
-                    </div>
-                    <div class="fm-grid" id="grid-${wid}"></div>
-                </div>
-            </div>`;
-        }
-
-        // تخزين الحالة المحلية لكل نافذة ملفات
-        const fmStates = {}; 
-
-        function initFiles(wid) {
-            fmStates[wid] = { current: 'root' };
-            refreshFiles(wid);
-        }
-
-        function refreshFiles(wid) {
-            const state = fmStates[wid];
-            const grid = document.getElementById(`grid-${wid}`);
-            const pathEl = document.getElementById(`path-${wid}`);
-            
-            // تصفية الملفات
-            const items = fileSystem.filter(i => i.parent == state.current);
-            
-            // تحديث المسار
-            pathEl.innerText = state.current === 'root' ? 'Computer' : `Computer > Folder ${state.current}`;
-
-            grid.innerHTML = '';
-            items.forEach(item => {
-                const icon = item.type === 'folder' ? 'fas fa-folder' : 'fas fa-file-alt';
-                const color = item.type === 'folder' ? '#ffca28' : '#eee';
-                const action = item.type === 'folder' ? `onclick="fmEnter('${wid}', ${item.id})"` : `onclick="alert('فتح الملف: ${item.name}')"`;
-                
-                grid.innerHTML += `
-                <div class="file-item" ${action}>
-                    <i class="${icon} file-icon" style="color:${color}"></i>
-                    <div class="file-name">${item.name}</div>
-                </div>`;
-            });
-            
-            if(items.length === 0) grid.innerHTML = '<div style="color:#666; width:100%; text-align:center; padding:20px;">المجلد فارغ</div>';
-        }
-
-        function fmEnter(wid, id) {
-            fmStates[wid].current = id;
-            refreshFiles(wid);
-        }
-
-        function fmUp(wid) {
-            const state = fmStates[wid];
-            if(state.current === 'root') return;
-            // بحث بسيط عن الأب (للتبسيط سنعود للروت دائماً هنا)
-            const currItem = fileSystem.find(i => i.id == state.current);
-            state.current = currItem ? currItem.parent : 'root';
-            refreshFiles(wid);
-        }
-
-        function fmNewFolder(wid) {
-            const name = prompt('اسم المجلد:');
-            if(name) {
-                fileSystem.push({ id: Date.now(), parent: fmStates[wid].current, name: name, type: 'folder' });
-                refreshFiles(wid);
-            }
-        }
-        function fmNewFile(wid) {
-            const name = prompt('اسم الملف:');
-            if(name) {
-                fileSystem.push({ id: Date.now(), parent: fmStates[wid].current, name: name + '.txt', type: 'file' });
-                refreshFiles(wid);
-            }
-        }
-
-        // --- Apps Logic ---
-        function renderStore() {
-            let h = `<div class="store-grid">`;
-            Object.keys(db).forEach(k => {
-                if(k === 'store') return;
-                const inst = sys.apps.includes(k);
-                h += `
-                <div class="store-item">
-                    <i class="${db[k].icon}" style="font-size:2rem;color:${db[k].color};margin-bottom:10px;"></i>
-                    <div style="font-weight:bold">${db[k].name}</div>
-                    <button onclick="${inst?'':'install(\''+k+'\')'}" style="margin-top:10px; padding:5px 15px; border:none; background:${inst?'#333':db[k].color}; color:${inst?'#888':'white'}; border-radius:5px; cursor:pointer;">
-                        ${inst ? 'مثبت' : 'تثبيت'}
-                    </button>
-                </div>`;
-            });
-            return h + '</div>';
-        }
-
-        function install(k) {
-            sys.apps.push(k);
-            localStorage.setItem(sys.storageKey, JSON.stringify(sys.apps));
-            refreshDesk();
-            // تحديث النوافذ المفتوحة للمتجر
-            document.querySelectorAll('.window').forEach(w => { if(w.querySelector('.store-grid')) w.querySelector('.win-body').innerHTML = renderStore(); });
-        }
-        function uninstall(k) {
-            sys.apps = sys.apps.filter(x => x!==k);
-            localStorage.setItem(sys.storageKey, JSON.stringify(sys.apps));
-            refreshDesk();
-        }
-
-        function renderChat(wid) {
-            return `
-            <div class="chat-layout">
-                <div class="chat-sidebar">
-                    <div class="chat-contact" style="background:#222;"><b>المحادثات العالمية</b></div>
-                    <div class="chat-contact"><i class="fas fa-user-circle"></i> Elon Musk</div>
-                    <div class="chat-contact"><i class="fas fa-user-circle"></i> Mark Z.</div>
-                    <div class="chat-contact"><i class="fas fa-user-circle"></i> Hatim Fans</div>
-                </div>
-                <div class="chat-msgs" id="chat-msgs-${wid}"></div>
-            </div>`;
-        }
-
-        function initChat(wid) {
-            const el = document.getElementById(`chat-msgs-${wid}`);
-            el.innerHTML = `<div class="chat-bubble in" style="background:var(--primary); color:black;">مرحباً أيها القائد حاتم! العالم بانتظارك.</div>`;
-            setInterval(() => {
-                const msgs = ["Hi Hatim! 🇺🇸", "Big Fan! 🇯🇵", "أحب نظامك! 🇸🇦", "Can I invest? 💸"];
-                if(Math.random() > 0.7) {
-                    el.innerHTML += `<div class="chat-bubble in">${msgs[Math.floor(Math.random()*msgs.length)]}</div>`;
-                    el.scrollTop = el.scrollHeight;
-                }
-            }, 4000);
-        }
-
-        function renderWriter() { return `<textarea style="width:100%; height:100%; background:white; color:black; padding:20px; border:none; font-size:1.1rem; outline:none;" placeholder="اكتب المستند هنا..."></textarea>`; }
+    renderUI:function(){
+        const icons=document.getElementById('icons'); 
+        const dock=document.getElementById('dock-apps'); 
+        const start=document.getElementById('start-list'); 
         
-        function renderSheets() { 
-            let t = '<table border="1" style="width:100%; border-collapse:collapse; border-color:#555;">';
-            for(let r=0; r<15; r++) { t+='<tr>'; for(let c=0;c<5;c++) { t+=`<td contenteditable style="padding:5px; text-align:center; color:${r===0?'var(--primary)':'white'}">${r===0?'Title':''}</td>`; } t+='</tr>'; }
-            return `<div style="overflow:auto; height:100%; padding:10px;">${t}</table></div>`;
-        }
+        Object.keys(this.apps).forEach(key=>{
+            const app=this.apps[key]; 
+            icons.innerHTML+=`<div class="app-icon" onclick="WindowManager.open('${key}')"><div class="icon-box"><i class="${app.icon}" style="color:${app.color}"></i></div><span>${app.name}</span></div>`; 
+            if(['files','browser','store','term','paint','games'].includes(key)){
+                dock.innerHTML+=`<div class="dock-item" id="dock-${key}" onclick="WindowManager.open('${key}')"><i class="${app.icon}" style="color:${app.color}"></i></div>`;
+            } 
+            start.innerHTML+=`<div class="start-item" onclick="WindowManager.open('${key}'); toggleStart()"><i class="${app.icon}" style="color:${app.color}; width:25px;"></i><span>${app.name}</span></div>`;
+        });
+    },
 
-        function renderGallery() {
-            return `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:10px;">
-                <img src="https://images.unsplash.com/photo-1511765224389-37f0e77cf0ad?w=300" style="width:100%; border-radius:5px;">
-                <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300" style="width:100%; border-radius:5px;">
-                <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=300" style="width:100%; border-radius:5px;">
-            </div>`;
-        }
+    startTime:function(){setInterval(()=>{document.getElementById('clock').innerText=new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})},1000);},
 
-        function renderMedia() { return `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/jfKfPfyJRdk" frameborder="0"></iframe>`; }
+    showToast:function(msg){const t=document.getElementById('toast'); t.innerText=msg; t.style.transform='translateX(0)'; setTimeout(()=>t.style.transform='translateX(150%)',3000);}
+};
 
-        // --- Misc ---
-        function updateStats() {
-            const el = document.getElementById('users-cnt');
-            let cnt = 9430211;
-            setInterval(() => { cnt += Math.floor(Math.random()*100)-30; el.innerText = cnt.toLocaleString(); }, 2000);
+// --- WINDOW MANAGER ---
+const WindowManager = {
+
+    open:function(key){
+        const app=System.apps[key]; 
+        const wid='win-'+Date.now(); 
+        const win=document.createElement('div'); 
+        win.className='window'; win.id=wid; win.style.zIndex=++System.zIndex; 
+        win.style.left=(50+Math.random()*50)+'px'; win.style.top=(50+Math.random()*50)+'px'; 
+        win.style.width='700px'; win.style.height='500px'; 
+        
+        win.innerHTML=`
+            <div class="win-head" onmousedown="WindowManager.drag(event, '${wid}')">
+                <div class="win-controls">
+                    <div class="win-dot close" onclick="WindowManager.close('${wid}')"></div>
+                    <div class="win-dot min" onclick="document.getElementById('${wid}').style.display='none'"></div>
+                    <div class="win-dot max" onclick="WindowManager.max('${wid}')"></div>
+                </div>
+                <div style="font-weight:500;">${app.name}</div>
+                <div style="width:50px;"></div>
+            </div>
+            <div class="win-body">${this.getContent(app,wid)}</div>`; 
             
-            const clock = document.getElementById('clock');
-            setInterval(() => { clock.innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }, 1000);
+        win.onmousedown=()=>win.style.zIndex=++System.zIndex; 
+        document.getElementById('win-layer').appendChild(win); 
+        
+        const di=document.getElementById('dock-'+key); 
+        if(di){di.classList.add('active'); di.style.transform='translateY(-10px)'; setTimeout(()=>di.style.transform='translateY(0)',300);} 
+        
+        if(app.type==='paint') this.initPaint(wid); 
+        if(app.type==='term') this.initTerm(wid); 
+    },
+
+    close:function(wid){document.getElementById(wid).remove();},
+
+    max:function(wid){
+        const w=document.getElementById(wid); 
+        if(w.style.width==='100%'){
+            w.style.width='700px'; w.style.height='500px'; w.style.top='50px'; w.style.left='50px'; w.style.borderRadius='12px';
+        } else {
+            w.style.width='100%'; w.style.height='calc(100% - 35px)'; w.style.top='35px'; w.style.left='0'; w.style.borderRadius='0';
         }
-    </script>
+    },
+
+    drag:function(e,wid){
+        const w=document.getElementById(wid);
+        const dx=e.clientX-w.offsetLeft;
+        const dy=e.clientY-w.offsetTop;
+        const mv=(ev)=>{ w.style.left=(ev.clientX-dx)+'px'; w.style.top=(ev.clientY-dy)+'px'; };
+        document.addEventListener('mousemove',mv);
+        document.onmouseup=()=>document.removeEventListener('mousemove',mv);
+    },
+
+    getContent:function(app, wid){
+        if(app.type==='web') return `<div style="display:flex; flex-direction:column; height:100%;"><div class="browser-bar"><input class="url-in" value="${app.url}" onchange="document.getElementById('f-${wid}').src=this.value"></div><iframe id="f-${wid}" src="${app.url}" style="flex:1; border:none; background:white;"></iframe></div>`;
+        if(app.type==='iframe') return `<iframe src="${app.url}" style="width:100%; height:100%; border:none;"></iframe>`;
+        if(app.type==='files') return `<div style="display:flex; height:100%;"><div style="width:150px; background:#181818; padding:10px;"><div style="padding:5px; color:#aaa;"><i class="fas fa-hdd"></i> القرص C</div><div style="padding:5px; color:#aaa;"><i class="fas fa-cloud"></i> السحابة</div></div><div style="padding:15px; display:grid; grid-template-columns:repeat(auto-fill, minmax(80px,1fr)); gap:10px; align-content:start; flex:1;"><div style="text-align:center;"><i class="fas fa-folder" style="font-size:2.5rem; color:#ffca28;"></i><div>ملفاتي</div></div><div style="text-align:center;"><i class="fas fa-file-image" style="font-size:2.5rem; color:#fff;"></i><div>صورة.png</div></div></div></div>`;
+        if(app.type==='paint') return `<div style="display:flex; flex-direction:column; height:100%;"><div class="paint-tools"><div class="color-dot active" style="background:white" onclick="WindowManager.setColor('${wid}','white',this)"></div><div class="color-dot" style="background:#ff0055" onclick="WindowManager.setColor('${wid}','#ff0055',this)"></div><div class="color-dot" style="background:#00d2ff" onclick="WindowManager.setColor('${wid}','#00d2ff',this)"></div></div><canvas id="cvs-${wid}" style="flex:1; background:#000; cursor:crosshair;"></canvas></div>`;
+        if(app.type==='term') return `<div class="term-box" id="term-box-${wid}" onclick="document.getElementById('in-${wid}').focus()"><div>ZENITH GLOBAL [v10.0]</div><div>(c) Hatim Corp.</div><br><div id="logs-${wid}"></div><div style="display:flex;"><span>root@zenith:~$ </span><input id="in-${wid}" class="term-in" onkeypress="if(event.key==='Enter') WindowManager.runCmd('${wid}',this)"></div></div>`;
+        if(app.type==='settings') return `<div style="padding:20px;"><h3>الخلفية</h3><div style="display:flex; gap:10px; margin-top:10px;"><div onclick="document.getElementById('wallpaper').style.backgroundImage='url(https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?q=80&w=2072)'" style="width:60px; height:40px; background:#333; cursor:pointer; border:1px solid #555;">1</div><div onclick="document.getElementById('wallpaper').style.backgroundImage='url(https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072)'" style="width:60px; height:40px; background:#333; cursor:pointer; border:1px solid #555;">2</div></div></div>`;
+        if(app.type==='games') return `<div style="text-align:center; padding:20px;"><h3>X-O (Tic Tac Toe)</h3><div class="xo-board" id="xo-${wid}">${[0,1,2,3,4,5,6,7,8].map(i=>`<div class="xo-cell" onclick="WindowManager.playXO('${wid}',this)"></div>`).join('')}</div><button onclick="WindowManager.open('games');WindowManager.close('${wid}')" style="padding:5px 15px; cursor:pointer;">إعادة اللعب</button></div>`;
+        if(app.type==='store') return `<div style="padding:20px; text-align:center;"><h2>المتجر</h2><div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; margin-top:20px;">${['VLC','Office','Discord','Zoom'].map(n=>`<div style="background:#222; padding:10px; border-radius:10px;">${n}<br><button style="margin-top:5px; background:var(--primary); border:none; border-radius:5px; padding:2px 10px; cursor:pointer;">تثبيت</button></div>`).join('')}</div></div>`;
+        return `<div style="padding:20px;">App Content</div>`;
+    },
+
+    // --- GAMES LOGIC (X-O) ---
+    playXO: function(wid, cell) {
+        if(cell.innerText) return;
+        cell.innerText = 'X'; cell.style.color = '#00d2ff';
+        const board = Array.from(document.querySelectorAll(`#xo-${wid} .xo-cell`));
+        const empty = board.filter(c => !c.innerText);
+        if(empty.length > 0) {
+            const r = Math.floor(Math.random() * empty.length);
+            setTimeout(() => { empty[r].innerText = 'O'; empty[r].style.color = '#f80759'; }, 300);
+        }
+    },
+
+    // --- PAINT LOGIC ---
+    initPaint: function(wid) {
+        setTimeout(() => {
+            const c = document.getElementById(`cvs-${wid}`);
+            if(!c) return;
+            const ctx = c.getContext('2d');
+            c.width = c.clientWidth; c.height = c.clientHeight;
+            c.dataset.color = 'white';
+            let p = false;
+            c.onmousedown = (e) => { p=true; draw(e); };
+            c.onmouseup = () => { p=false; ctx.beginPath(); };
+            c.onmousemove = draw;
+            function draw(e) {
+                if(!p) return;
+                const r = c.getBoundingClientRect();
+                ctx.lineWidth = 4; ctx.lineCap = 'round';
+                ctx.strokeStyle = c.dataset.color;
+                ctx.lineTo(e.clientX - r.left, e.clientY - r.top);
+                ctx.stroke(); ctx.beginPath(); ctx.moveTo(e.clientX - r.left, e.clientY - r.top);
+            }
+        }, 100);
+    },
+    setColor: function(wid, col, btn) {
+        document.getElementById(`cvs-${wid}`).dataset.color = col;
+        btn.parentElement.querySelectorAll('.color-dot').forEach(e=>e.classList.remove('active'));
+        btn.classList.add('active');
+    },
+
+    // --- TERM LOGIC ---
+    initTerm: function(wid) { setTimeout(()=>document.getElementById(`in-${wid}`).focus(), 100); },
+    runCmd: function(wid, input) {
+        const val = input.value.trim();
+        const log = document.getElementById(`logs-${wid}`);
+        input.value = '';
+        log.innerHTML += `<div>root@zenith:~$ ${val}</div>`;
+        let res = '';
+        if(val === 'help') res = 'cmds: help, clear, date, whoami';
+        else if(val === 'date') res = new Date().toString();
+        else if(val === 'whoami') res = 'Commander Hatim';
+        else if(val === 'clear') log.innerHTML = '';
+        else if(val) res = 'Command not found.';
+        if(res) log.innerHTML += `<div style="color:#aaa;">${res}</div>`;
+        document.getElementById(`term-box-${wid}`).scrollTop = document.getElementById(`term-box-${wid}`).scrollHeight;
+    }
+};
+
+function toggleStart() {
+    const m = document.getElementById('start-menu');
+    m.classList.toggle('show');
+}
+
+// Close Start Menu on outside click
+document.addEventListener('click', (e) => {
+    const m = document.getElementById('start-menu');
+    const dock = document.getElementById('dock');
+    if(m.classList.contains('show') && !m.contains(e.target) && !dock.contains(e.target)) {
+        m.classList.remove('show');
+    }
+});
+
+// Init System
+System.init();
+
+</script>
 </body>
 </html>
+
+
