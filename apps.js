@@ -1,225 +1,160 @@
 const HatimOS = {
-  z: 10,
-  apps: {},
-  desktopApps: JSON.parse(localStorage.getItem('h_apps')) || ['Snake','Tetris','Browser','AI','Tic Tac Toe','Calculator','Notes','Piano'],
-  
-  boot() {
-    this.clock();
-    setInterval(this.clock, 1000);
-    this.registerApps();
-    this.renderDesktop();
-    this.loadStore();
-  },
+    z: 100,
+    apps: {},
+    installedApps: JSON.parse(localStorage.getItem('h_apps')) || ['Browser', 'Notes', 'Calculator', 'Tic Tac Toe'],
 
-  clock() {
-    const t = new Date().toLocaleTimeString();
-    document.getElementById("clock").innerText = t;
-    document.getElementById("mini-clock").innerText = t;
-  },
+    boot() {
+        this.stars();
+        this.updateClock();
+        setInterval(() => this.updateClock(), 1000);
+        this.registerAllApps();
+        this.renderDesktop();
+        this.loadStore();
+    },
 
-  registerApps() {
-    // ---------------- Snake ----------------
-    this.apps["Snake"] = {
-      name: "Snake",
-      render: (win) => {
-        win.querySelector(".body").innerHTML = `<canvas id="snakeCanvas" width="400" height="400" style="background:#111;margin:auto;display:block;border-radius:10px;"></canvas>`;
-        const canvas = document.getElementById("snakeCanvas");
-        const ctx = canvas.getContext("2d");
-        const box = 20;
-        let snake = [{x:9*box, y:10*box}];
-        let food = {x: Math.floor(Math.random()*20)*box, y: Math.floor(Math.random()*20)*box};
-        let dir = null;
-        document.addEventListener("keydown", e => {
-          if(e.key==="ArrowUp" && dir!=="DOWN") dir="UP";
-          if(e.key==="ArrowDown" && dir!=="UP") dir="DOWN";
-          if(e.key==="ArrowLeft" && dir!=="RIGHT") dir="LEFT";
-          if(e.key==="ArrowRight" && dir!=="LEFT") dir="RIGHT";
-        });
-        function draw() {
-          ctx.fillStyle="#111"; ctx.fillRect(0,0,canvas.width,canvas.height);
-          for(let i=0;i<snake.length;i++){
-            ctx.fillStyle=i===0?"#0ff":"#00a"; ctx.fillRect(snake[i].x,snake[i].y,box,box);
-          }
-          ctx.fillStyle="#f00"; ctx.fillRect(food.x,food.y,box,box);
-          let headX=snake[0].x, headY=snake[0].y;
-          if(dir==="UP") headY-=box;
-          if(dir==="DOWN") headY+=box;
-          if(dir==="LEFT") headX-=box;
-          if(dir==="RIGHT") headX+=box;
-          if(headX===food.x && headY===food.y) food={x: Math.floor(Math.random()*20)*box, y: Math.floor(Math.random()*20)*box};
-          else snake.pop();
-          let newHead={x:headX,y:headY};
-          if(headX<0||headX>=canvas.width||headY<0||headY>=canvas.height||snake.some(s=>s.x===headX && s.y===headY)){
-            clearInterval(game); alert("انتهت اللعبة!");
-          }
-          snake.unshift(newHead);
+    unlock() {
+        const lock = document.getElementById("lock");
+        lock.style.transform = "translateY(-100%)";
+        setTimeout(() => lock.style.display = "none", 1000);
+    },
+
+    stars() {
+        const space = document.getElementById("space");
+        for (let i = 0; i < 80; i++) {
+            const s = document.createElement("div");
+            s.className = "star";
+            s.style.left = Math.random() * 100 + "vw";
+            s.style.top = Math.random() * 100 + "vh";
+            s.style.animationDelay = Math.random() * 2 + "s";
+            space.appendChild(s);
         }
-        const game = setInterval(draw,150);
-      }
-    };
+    },
 
-    // ---------------- Tetris ----------------
-    this.apps["Tetris"] = {
-      name: "Tetris",
-      render: (win) => {
-        win.querySelector(".body").innerHTML = `<p>لعبة Tetris جاهزة (يمكن تطويرها لاحقًا بالكود الكامل)</p>`;
-      }
-    };
+    updateClock() {
+        const t = new Date().toLocaleTimeString('ar-EG');
+        if(document.getElementById("clock")) document.getElementById("clock").innerText = t;
+        if(document.getElementById("mini-clock")) document.getElementById("mini-clock").innerText = t;
+    },
 
-    // ---------------- Tic Tac Toe ----------------
-    this.apps["Tic Tac Toe"] = {
-      name: "Tic Tac Toe",
-      render: (win) => {
-        win.querySelector(".body").innerHTML = `
-          <div id="ttt" style="display:grid;grid-template-columns:repeat(3,100px);gap:5px;justify-content:center;">
-            ${Array(9).fill('<button style="width:100px;height:100px;font-size:2rem"></button>').join('')}
-          </div>
-          <p id="ttt-result" style="text-align:center;margin-top:10px;"></p>
-        `;
-        const board = Array(9).fill(null);
-        const buttons = win.querySelectorAll("#ttt button");
-        let turn = "X";
-        function checkWinner(){
-          const combos=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-          for(let c of combos){ const [a,b,d]=c; if(board[a] && board[a]===board[b] && board[a]===board[d]) return board[a]; }
-          return board.includes(null)?null:"Draw";
+    registerAllApps() {
+        const appList = [
+            { id: 'Snake', name: 'لعبة الثعبان', icon: 'fa-snake', color: '#4CAF50' },
+            { id: 'Browser', name: 'المتصفح', icon: 'fa-globe', color: '#2196F3' },
+            { id: 'Calculator', name: 'الحاسبة', icon: 'fa-calculator', color: '#FF9800' },
+            { id: 'Notes', name: 'المفكرة', icon: 'fa-sticky-note', color: '#FFEB3B' },
+            { id: 'Tic Tac Toe', name: 'إكس أو', icon: 'fa-gamepad', color: '#E91E63' },
+            { id: 'AI', name: 'المساعد الذكي', icon: 'fa-robot', color: '#9C27B0' }
+        ];
+
+        appList.forEach(app => {
+            this.apps[app.id] = {
+                ...app,
+                render: (win) => this.getAppTemplate(app.id, win)
+            };
+        });
+    },
+
+    renderDesktop() {
+        const desk = document.getElementById("desktop");
+        desk.innerHTML = "";
+        this.installedApps.forEach(appId => {
+            const app = this.apps[appId];
+            if (!app) return;
+            const icon = document.createElement("div");
+            icon.className = "icon";
+            icon.innerHTML = `<i class="fas ${app.icon}" style="color:${app.color}"></i><span>${app.name}</span>`;
+            icon.onclick = () => this.openApp(appId);
+            desk.appendChild(icon);
+        });
+    },
+
+    openApp(id) {
+        if (document.getElementById(`win-${id}`)) {
+            this.focusWindow(`win-${id}`);
+            return;
         }
-        buttons.forEach((btn,i)=>{
-          btn.onclick = ()=>{
-            if(board[i]) return;
-            board[i]=turn; btn.innerText=turn;
-            const winner=checkWinner();
-            if(winner){
-              document.getElementById("ttt-result").innerText=winner==="Draw"?"تعادل!":winner+" فاز!";
-              buttons.forEach(b=>b.disabled=true);
-            }
-            turn = turn==="X"?"O":"X";
-          };
-        });
-      }
-    };
-
-    // ---------------- Browser ----------------
-    this.apps["Browser"] = {
-      name: "Browser",
-      render: (win) => {
-        win.querySelector(".body").innerHTML = `<iframe src="https://www.google.com" style="width:100%;height:100%;border:none;"></iframe>`;
-      }
-    };
-
-    // ---------------- AI Assistant ----------------
-    this.apps["AI"] = {
-      name: "AI Assistant",
-      render: (win) => {
-        win.querySelector(".body").innerHTML = `
-          <div style="text-align:center;padding:20px;">
-            <h3>مساعد الذكاء الاصطناعي</h3>
-            <input type="text" placeholder="اكتب سؤالك..." style="width:80%;padding:10px;border-radius:10px;border:none;">
-          </div>
+        const app = this.apps[id];
+        const win = document.createElement("div");
+        win.className = "window";
+        win.id = `win-${id}`;
+        win.style.zIndex = ++this.z;
+        win.innerHTML = `
+            <div class="bar" onmousedown="HatimOS.focusWindow('win-${id}')">
+                <span><i class="fas ${app.icon}"></i> ${app.name}</span>
+                <span class="close-win" onclick="document.getElementById('win-${id}').remove()">×</span>
+            </div>
+            <div class="body"></div>
         `;
-      }
-    };
+        document.body.appendChild(win);
+        app.render(win.querySelector(".body"));
+        this.makeDraggable(win);
+    },
 
-    // ---------------- Calculator ----------------
-    this.apps["Calculator"] = {
-      name: "Calculator",
-      render: (win) => {
-        win.querySelector(".body").innerHTML = `
-          <input id="calc" style="width:90%;margin:10px;padding:10px;font-size:1.5rem;text-align:right;" readonly>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">
-            ${["7","8","9","/","4","5","6","*","1","2","3","-","0",".","=","+"].map(n=>`<button style="padding:15px;font-size:1.2rem">${n}</button>`).join('')}
-          </div>
-        `;
-        const input = win.querySelector("#calc");
-        win.querySelectorAll("button").forEach(btn=>{
-          btn.onclick = ()=>{
-            if(btn.innerText==="=") input.value=eval(input.value)||"";
-            else input.value+=btn.innerText;
-          };
+    focusWindow(winId) {
+        document.getElementById(winId).style.zIndex = ++this.z;
+    },
+
+    makeDraggable(win) {
+        const bar = win.querySelector(".bar");
+        let x = 0, y = 0, nx = 0, ny = 0;
+        bar.onmousedown = (e) => {
+            e.preventDefault();
+            nx = e.clientX; ny = e.clientY;
+            document.onmousemove = (ev) => {
+                x = nx - ev.clientX; y = ny - ev.clientY;
+                nx = ev.clientX; ny = ev.clientY;
+                win.style.top = (win.offsetTop - y) + "px";
+                win.style.left = (win.offsetLeft - x) + "px";
+            };
+            document.onmouseup = () => document.onmousemove = null;
+        };
+    },
+
+    toggleStore(show) {
+        document.getElementById("store").style.display = show ? "block" : "none";
+    },
+
+    loadStore() {
+        const grid = document.getElementById("store-items");
+        grid.innerHTML = "";
+        Object.keys(this.apps).forEach(id => {
+            const app = this.apps[id];
+            const isInstalled = this.installedApps.includes(id);
+            const card = document.createElement("div");
+            card.className = "store-card";
+            card.innerHTML = `
+                <i class="fas ${app.icon} fa-2x"></i>
+                <h3>${app.name}</h3>
+                <button onclick="HatimOS.installApp('${id}')" ${isInstalled ? 'disabled' : ''}>
+                    ${isInstalled ? 'مثبت' : 'تثبيت'}
+                </button>
+            `;
+            grid.appendChild(card);
         });
-      }
-    };
+    },
 
-    // ---------------- Notes ----------------
-    this.apps["Notes"] = {
-      name: "Notes",
-      render: (win) => {
-        win.querySelector(".body").innerHTML = `<textarea style="width:100%;height:100%;background:#111;color:white;border:none;padding:10px;" placeholder="اكتب ملاحظاتك هنا..."></textarea>`;
-      }
-    };
+    installApp(id) {
+        if (!this.installedApps.includes(id)) {
+            this.installedApps.push(id);
+            localStorage.setItem('h_apps', JSON.stringify(this.installedApps));
+            this.renderDesktop();
+            this.loadStore();
+        }
+    },
 
-    // ---------------- Piano ----------------
-    this.apps["Piano"] = {
-      name: "Piano",
-      render: (win) => {
-        win.querySelector(".body").innerHTML = `
-          <div style="display:flex;justify-content:center;gap:5px;">
-            ${["C","D","E","F","G","A","B"].map(n=>`<button style="padding:20px;font-size:1.2rem">${n}</button>`).join('')}
-          </div>
-        `;
-        win.querySelectorAll("button").forEach(btn=>{
-          btn.onclick = ()=>{ alert("تشغيل نغمة "+btn.innerText); };
-        });
-      }
-    };
-  },
-
-  renderDesktop(){
-    const desk = document.getElementById("desktop");
-    desk.innerHTML="";
-    this.desktopApps.forEach(app=>{
-      const icon = document.createElement("div");
-      icon.className="icon";
-      icon.innerText = app;
-      icon.ondblclick = ()=>this.open(app);
-      desk.appendChild(icon);
-    });
-  },
-
-  open(name){
-    if(document.getElementById(name)) return;
-    const app = this.apps[name];
-    const win = document.createElement("div");
-    win.className="window";
-    win.id=name;
-    win.style.zIndex=++this.z;
-    win.style.top="50px"; win.style.left="50px";
-    win.innerHTML = `<div class="bar"><span>${name}</span><span onclick="this.closest('.window').remove()">✖</span></div><div class="body"></div>`;
-    document.body.appendChild(win);
-    if(app.render) app.render(win);
-
-    // سحب النافذة
-    const bar = win.querySelector(".bar");
-    let ox,oy;
-    bar.onmousedown = e => {
-      ox = e.clientX - win.offsetLeft; oy = e.clientY - win.offsetTop;
-      document.onmousemove = ev => { win.style.left = ev.clientX-ox+"px"; win.style.top = ev.clientY-oy+"px"; };
-      document.onmouseup = ()=>document.onmousemove=null;
-    };
-  },
-
-  toggleStore(show){
-    document.getElementById("store").style.display = show?"block":"none";
-  },
-
-  loadStore(){
-    const items = ["Snake","Tetris","Browser","AI","Tic Tac Toe","Calculator","Notes","Piano"];
-    const grid = document.getElementById("store-items");
-    grid.innerHTML="";
-    items.forEach(i=>{
-      const card = document.createElement("div");
-      card.className="store-card";
-      card.innerHTML=`<h3>${i}</h3><button onclick="HatimOS.installApp('${i}')">تثبيت</button>`;
-      grid.appendChild(card);
-    });
-  },
-
-  installApp(name){
-    if(!this.desktopApps.includes(name)){
-      this.desktopApps.push(name);
-      localStorage.setItem('h_apps',JSON.stringify(this.desktopApps));
-      this.renderDesktop();
-      alert('تم تثبيت '+name+' بنجاح!');
+    getAppTemplate(id, container) {
+        switch (id) {
+            case 'Notes':
+                container.innerHTML = `<textarea placeholder="اكتب ملاحظاتك هنا..." style="width:100%;height:100%;background:transparent;color:white;border:none;outline:none;resize:none;"></textarea>`;
+                break;
+            case 'Calculator':
+                container.innerHTML = `<div class="calc-ui">قريباً.. يمكنك وضع كود الحاسبة هنا</div>`;
+                break;
+            case 'Browser':
+                container.innerHTML = `<iframe src="https://www.bing.com" style="width:100%;height:100%;border:none;background:white;"></iframe>`;
+                break;
+            default:
+                container.innerHTML = `<div style="text-align:center;padding:20px;">محتوى تطبيق ${id} قيد التطوير</div>`;
+        }
     }
-  }
 };
