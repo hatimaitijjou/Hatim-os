@@ -1,42 +1,42 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hatim OS ∞</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hatim OS ∞</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body onload="HatimOS.boot()">
 
-<!-- خلفية -->
-<div id="background"></div>
+    <div id="background">
+        <div id="space"></div> </div>
 
-<!-- شاشة القفل -->
-<div id="lock" onclick="this.style.transform='translateY(-100%)'">
-  <div class="brand">H</div>
-  <h1 id="clock">00:00</h1>
-  <p>HATIM OS INFINITY</p>
-  <p style="color:#00d2ff">اضغط للدخول</p>
-</div>
+    <div id="lock" onclick="HatimOS.unlock()">
+        <div class="brand">H</div>
+        <h1 id="clock">00:00:00</h1>
+        <p>HATIM OS INFINITY</p>
+        <p class="blink">اضغط للدخول</p>
+    </div>
 
-<!-- سطح المكتب -->
-<div id="desktop"></div>
+    <div id="desktop"></div>
 
-<!-- متجر التطبيقات -->
-<div id="store" class="overlay">
-  <div class="store-header">
-    <h1>متجر التطبيقات</h1>
-    <button onclick="HatimOS.toggleStore(false)">×</button>
-  </div>
-  <div id="store-items" class="store-grid"></div>
-</div>
+    <div id="store" class="overlay">
+        <div class="store-header">
+            <h1><i class="fas fa-shopping-bag"></i> متجر التطبيقات</h1>
+            <button class="close-btn" onclick="HatimOS.toggleStore(false)">×</button>
+        </div>
+        <div id="store-items" class="store-grid"></div>
+    </div>
 
-<!-- شريط المهام -->
-<div id="taskbar">
-  <div class="icon" onclick="HatimOS.toggleStore(true)">🛒</div>
-  <div id="mini-clock">00:00</div>
-</div>
+    <div id="taskbar">
+        <div class="start-btn" onclick="HatimOS.toggleStore(true)">
+            <i class="fas fa-th-large"></i>
+        </div>
+        <div id="active-apps"></div>
+        <div id="mini-clock">00:00</div>
+    </div>
 
-<script src="app.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
