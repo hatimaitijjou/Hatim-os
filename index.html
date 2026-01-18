@@ -3,31 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hatim OS Infinity 2.0</title>
+    <title>Hatim OS Infinity 2.0 - المتكامل</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* --- قسم التنسيق (CSS) --- */
+        :root {
+            --cyan: #00e5ff;
+            --glass: rgba(20, 20, 20, 0.9);
+            --border: rgba(255, 255, 255, 0.1);
+            --accent: #00d2ff;
+        }
+
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            background: #000; color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            direction: rtl;
+        }
+
+        /* شاشة القفل */
+        #lock-screen {
+            position: fixed; inset: 0; z-index: 10000;
+            background: radial-gradient(circle at center, #0a0a0a, #000);
+            display: flex; justify-content: center; align-items: center;
+            transition: transform 0.8s cubic-bezier(0.85, 0, 0.15, 1), opacity 0.5s;
+        }
+
+        .lock-container { text-align: center; width: 320px; }
+        
+        .avatar {
+            font-size: 80px; color: var(--cyan);
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 15px rgba(0, 229, 255, 0.4));
+        }
+
+        #lock-clock { font-size: 65px; margin: 10px 0; font-weight: 300; }
+
+        .input-group {
+            display: flex; background: #151515;
+            padding: 8px; border-radius: 50px;
+            border: 1px solid #333; align-items: center;
+            margin-top: 20px;
+        }
+
+        .input-group input {
+            background: none; border: none; color: white;
+            padding: 10px; flex: 1; outline: none; text-align: center;
+        }
+
+        .input-group button {
+            background: var(--cyan); border: none; width: 40px; height: 40px;
+            border-radius: 50%; cursor: pointer; color: black;
+        }
+
+        /* سطح المكتب */
+        #desktop {
+            position: relative; height: 100vh; width: 100vw;
+            background: radial-gradient(circle, #151515, #000);
+            display: none; /* يظهر بعد الدخول */
+        }
+
+        #icons-grid {
+            padding: 30px; display: grid;
+            grid-template-columns: repeat(auto-fill, 100px);
+            grid-auto-rows: 110px; gap: 20px;
+        }
+
+        .icon {
+            display: flex; flex-direction: column; align-items: center;
+            cursor: pointer; transition: 0.2s; padding: 10px; border-radius: 12px;
+        }
+        .icon:hover { background: rgba(255,255,255,0.1); transform: scale(1.05); }
+        .icon i { font-size: 40px; margin-bottom: 8px; }
+        .icon span { font-size: 13px; }
+
+        /* النوافذ */
+        .window {
+            position: absolute; width: 450px; min-height: 320px;
+            background: var(--glass); border: 1px solid var(--border);
+            border-radius: 15px; backdrop-filter: blur(15px);
+            display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+
+        .window .bar {
+            padding: 12px 18px; background: rgba(255,255,255,0.05);
+            display: flex; justify-content: space-between; cursor: move;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .close-win { color: #ff5f56; cursor: pointer; font-size: 20px; }
+
+        .window .body { padding: 20px; flex: 1; overflow-y: auto; }
+
+        /* شريط المهام */
+        #taskbar {
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            background: rgba(15,15,15,0.8); backdrop-filter: blur(10px);
+            padding: 10px 30px; border-radius: 30px;
+            display: flex; align-items: center; gap: 25px;
+            border: 1px solid var(--border); z-index: 9999;
+        }
+
+        .task-btn { font-size: 22px; color: var(--cyan); cursor: pointer; transition: 0.3s; }
+        .task-btn:hover { transform: scale(1.2); }
+        #mini-clock { font-size: 14px; color: #eee; }
+
+        /* أزرار الإعدادات */
+        .settings-item { margin-bottom: 15px; text-align: right; }
+        .settings-btn {
+            width: 100%; padding: 10px; border-radius: 8px; border: none;
+            background: #333; color: white; cursor: pointer; margin-top: 5px;
+        }
+        .settings-btn.danger { background: #b32d2d; }
+    </style>
 </head>
 <body onload="HOS.boot()">
-
-    <div id="background"></div>
 
     <div id="lock-screen">
         <div class="lock-container">
             <div class="avatar"><i class="fas fa-user-astronaut"></i></div>
             <h1 id="lock-clock">00:00</h1>
+            
             <div id="setup-area" style="display:none;">
-                <p>إعداد النظام لأول مرة</p>
+                <p style="font-size: 14px; color: var(--cyan);">أنشئ كلمة مرور لنظامك:</p>
                 <div class="input-group">
-                    <input type="password" id="new-pass" placeholder="اختر كلمة مرور">
+                    <input type="password" id="new-pass" placeholder="كلمة مرور جديدة">
                     <button onclick="HOS.saveFirstPass()"><i class="fas fa-check"></i></button>
                 </div>
             </div>
+
             <div id="login-area" style="display:none;">
                 <div class="input-group">
-                    <input type="password" id="pass-field" placeholder="كلمة المرور">
+                    <input type="password" id="pass-field" placeholder="أدخل كلمة المرور">
                     <button onclick="HOS.checkPass()"><i class="fas fa-arrow-left"></i></button>
                 </div>
-                <p id="error-msg"></p>
+                <p id="error-msg" style="color: #ff5f56; font-size: 12px; margin-top: 10px;"></p>
             </div>
         </div>
     </div>
@@ -35,13 +147,161 @@
     <div id="desktop">
         <div id="icons-grid"></div>
         <div id="windows-container"></div>
+        
+        <div id="taskbar">
+            <div class="task-btn" onclick="HOS.openApp('Settings')"><i class="fas fa-cog"></i></div>
+            <div class="task-btn" onclick="HOS.openApp('Notes')"><i class="fas fa-sticky-note"></i></div>
+            <div id="mini-clock">00:00</div>
+        </div>
     </div>
 
-    <div id="taskbar">
-        <div class="start-btn" onclick="HOS.openApp('Settings')"><i class="fas fa-cog"></i></div>
-        <div id="mini-clock">00:00</div>
-    </div>
+    <script>
+        /* --- قسم البرمجة (JavaScript) --- */
+        const HOS = {
+            z: 100,
+            password: localStorage.getItem('hos_pass'),
 
-    <script src="apps.js"></script>
+            boot() {
+                this.updateTime();
+                setInterval(() => this.updateTime(), 1000);
+                this.renderIcons();
+
+                const setupArea = document.getElementById('setup-area');
+                const loginArea = document.getElementById('login-area');
+
+                if (!this.password) {
+                    setupArea.style.display = "block";
+                    loginArea.style.display = "none";
+                } else {
+                    setupArea.style.display = "none";
+                    loginArea.style.display = "block";
+                }
+            },
+
+            updateTime() {
+                const now = new Date();
+                const t = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+                if(document.getElementById('lock-clock')) document.getElementById('lock-clock').innerText = t;
+                if(document.getElementById('mini-clock')) document.getElementById('mini-clock').innerText = t;
+            },
+
+            saveFirstPass() {
+                const p = document.getElementById('new-pass').value;
+                if (p.length < 1) return alert("يرجى كتابة كلمة مرور!");
+                localStorage.setItem('hos_pass', p);
+                this.password = p;
+                alert("تم تعيين كلمة المرور بنجاح!");
+                location.reload();
+            },
+
+            checkPass() {
+                const p = document.getElementById('pass-field').value;
+                if (p === this.password) {
+                    this.unlock();
+                } else {
+                    document.getElementById('error-msg').innerText = "كلمة المرور غير صحيحة!";
+                }
+            },
+
+            unlock() {
+                const lock = document.getElementById('lock-screen');
+                lock.style.transform = "translateY(-100%)";
+                lock.style.opacity = "0";
+                setTimeout(() => {
+                    lock.style.display = "none";
+                    document.getElementById('desktop').style.display = "block";
+                }, 800);
+            },
+
+            renderIcons() {
+                const apps = [
+                    { id: 'Settings', name: 'الإعدادات', icon: 'fa-cog', color: '#00e5ff' },
+                    { id: 'Notes', name: 'الملاحظات', icon: 'fa-sticky-note', color: '#ffcc00' },
+                    { id: 'Calculator', name: 'الحاسبة', icon: 'fa-calculator', color: '#4caf50' }
+                ];
+                const grid = document.getElementById('icons-grid');
+                grid.innerHTML = "";
+                apps.forEach(app => {
+                    const item = document.createElement('div');
+                    item.className = "icon";
+                    item.onclick = () => this.openApp(app.id);
+                    item.innerHTML = `<i class="fas ${app.icon}" style="color:${app.color}"></i><span>${app.name}</span>`;
+                    grid.appendChild(item);
+                });
+            },
+
+            openApp(id) {
+                if (document.getElementById('win-' + id)) {
+                    this.focusWin('win-' + id);
+                    return;
+                }
+                const win = document.createElement('div');
+                win.className = "window";
+                win.id = 'win-' + id;
+                win.style.zIndex = ++this.z;
+                win.style.top = "80px"; win.style.left = "80px";
+
+                let bodyContent = "";
+                if (id === 'Settings') bodyContent = this.getSettingsUI();
+                else if (id === 'Notes') bodyContent = `<textarea style="width:100%;height:150px;background:transparent;color:white;border:none;outline:none;resize:none;" placeholder="اكتب ملاحظاتك هنا..."></textarea>`;
+                else bodyContent = `<p style="text-align:center;">تطبيق ${id} قيد التطوير حالياً.</p>`;
+
+                win.innerHTML = `
+                    <div class="bar" onmousedown="HOS.drag(event, this)">
+                        <span><i class="fas fa-window-maximize"></i> ${id}</span>
+                        <span class="close-win" onclick="this.closest('.window').remove()">×</span>
+                    </div>
+                    <div class="body">${bodyContent}</div>`;
+                
+                document.getElementById('windows-container').appendChild(win);
+            },
+
+            focusWin(winId) {
+                document.getElementById(winId).style.zIndex = ++this.z;
+            },
+
+            getSettingsUI() {
+                return `
+                    <div class="settings-item">
+                        <label>تغيير كلمة المرور الجديدة:</label>
+                        <input type="password" id="change-pass-inp" style="width:100%;padding:8px;margin-top:5px;border-radius:5px;border:none;">
+                        <button class="settings-btn" onclick="HOS.updatePass()">تحديث الكلمة</button>
+                    </div>
+                    <hr style="border: 0; border-top: 1px solid #444; margin: 15px 0;">
+                    <div class="settings-item">
+                        <label>إعادة ضبط النظام:</label>
+                        <button class="settings-btn danger" onclick="HOS.factoryReset()">مسح كافة البيانات (Format)</button>
+                    </div>`;
+            },
+
+            updatePass() {
+                const newP = document.getElementById('change-pass-inp').value;
+                if (newP) {
+                    localStorage.setItem('hos_pass', newP);
+                    this.password = newP;
+                    alert("تم تحديث كلمة المرور!");
+                }
+            },
+
+            factoryReset() {
+                if (confirm("تحذير! سيتم مسح كلمة المرور والبيانات، هل أنت متأكد؟")) {
+                    localStorage.clear();
+                    location.reload();
+                }
+            },
+
+            drag(e, bar) {
+                const win = bar.parentElement;
+                this.focusWin(win.id);
+                let ox = e.clientX - win.offsetLeft;
+                let oy = e.clientY - win.offsetTop;
+                document.onmousemove = (ev) => {
+                    win.style.left = ev.clientX - ox + "px";
+                    win.style.top = ev.clientY - oy + "px";
+                };
+                document.onmouseup = () => document.onmousemove = null;
+            }
+        };
+    </script>
 </body>
 </html>
