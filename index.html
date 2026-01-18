@@ -12,7 +12,28 @@
     <div id="background">
         <div id="stars-container"></div>
     </div>
+<div id="lock-screen">
+    <div class="lock-content">
+        <div class="avatar"><i class="fas fa-user-shield"></i></div>
+        <h1 id="lock-clock">00:00</h1>
+        
+        <div id="setup-box" style="display: none;">
+            <p>مرحباً بك! أنشئ كلمة مرور لنظامك:</p>
+            <div class="login-box">
+                <input type="password" id="new-pass" placeholder="كلمة مرور جديدة">
+                <button onclick="HOS.setupPassword()"><i class="fas fa-check"></i></button>
+            </div>
+        </div>
 
+        <div id="login-box" style="display: none;">
+            <div class="login-box">
+                <input type="password" id="pass-field" placeholder="أدخل كلمة المرور">
+                <button onclick="HOS.checkPassword()"><i class="fas fa-arrow-left"></i></button>
+            </div>
+            <p id="error-msg" style="color: #ff5f56; font-size: 14px; margin-top: 10px;"></p>
+        </div>
+    </div>
+</div>
     <div id="lock-screen">
         <div class="lock-content">
             <div class="avatar"><i class="fas fa-user-astronaut"></i></div>
