@@ -1,10 +1,10 @@
 {
-  "name": "Hatim OS",
-  "short_name": "HatimOS",
-  "start_url": "index.html",
+  "name": "HATIM OS Infinity 2026",
+  "short_name": "HOS",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#050505",
+  "theme_color": "#00d2ff",
   "icons": [
     {
       "src": "icon.png",
